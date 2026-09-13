@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: bizpilot-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: bizpilot_user
+      POSTGRES_PASSWORD: bizpilot_password
+      POSTGRES_DB: bizpilot_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bizpilot_user -d bizpilot_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: bizpilot-backend
+    restart: always
+    environment:
+      - APP_ENV=development
+      - DATABASE_URL=postgresql://bizpilot_user:bizpilot_password@postgres:5432/bizpilot_db
+      - SECRET_KEY=dev_secret_key_change_in_production_123456789
+      - CORS_ORIGINS=["http://localhost:5173","http://localhost:3000","http://127.0.0.1:5173"]
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: bizpilot-frontend
+    restart: always
+    environment:
+      - VITE_API_BASE_URL=http://localhost:8000
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
