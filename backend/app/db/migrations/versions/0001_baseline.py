@@ -1,16 +1,17 @@
 """0001_baseline: Foundation baseline migration initializing PostgreSQL extensions.
 
 Revision ID: 0001_baseline
-Revises: 
+Revises:
 Create Date: 2026-09-13 00:00:00.000000
 
 """
+
 from collections.abc import Sequence
 
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = '0001_baseline'
+revision: str = "0001_baseline"
 down_revision: str | None = None
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None

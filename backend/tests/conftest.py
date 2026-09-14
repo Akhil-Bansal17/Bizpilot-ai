@@ -21,9 +21,9 @@ engine = create_engine(
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
-@pytest.fixture(scope="session", autouse=True)
+@pytest.fixture(autouse=True)
 def setup_test_db():
-    """Create test tables before running tests and drop afterwards."""
+    """Create test tables before running each test and drop afterwards to isolate state."""
     Base.metadata.create_all(bind=engine)
     yield
     Base.metadata.drop_all(bind=engine)
@@ -42,6 +42,7 @@ def db_session() -> Generator[Session, None, None]:
 @pytest.fixture
 def client(db_session: Session) -> Generator[TestClient, None, None]:
     """Provides a FastAPI TestClient configured with test DB dependency override."""
+
     def _override_get_db():
         try:
             yield db_session

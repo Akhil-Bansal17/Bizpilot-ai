@@ -18,7 +18,12 @@ class Settings(BaseSettings):
     APP_ENV: str = "development"
     VERSION: str = "0.1.0"
     SECRET_KEY: str = "dev_secret_key_change_in_production_123456789"
-    DATABASE_URL: str = "postgresql://bizpilot_user:bizpilot_password@localhost:5432/bizpilot_db"
+    JWT_SECRET_KEY: str = "dev_jwt_secret_key_change_in_production_987654321"
+    JWT_ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24
+    DATABASE_URL: str = (
+        "postgresql://bizpilot_user:bizpilot_password@localhost:5432/bizpilot_db"
+    )
     CORS_ORIGINS: list[str] | str = [
         "http://localhost:5173",
         "http://localhost:3000",
